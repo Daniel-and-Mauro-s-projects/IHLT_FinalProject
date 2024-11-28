@@ -1,0 +1,31 @@
+# MAURO: Possible approach:
+Since I'm familiar with **XGBoost**, and I've found would results using it in the past, I would do 
+- Pick objective data from the sentences 
+  - difference in length
+  - difference in words
+  - difference in punctuation symbols
+  - etc.
+- Pick all of the simmilarity metrics we've seen
+  - for synsets
+    - wu-palmer
+    - path-simmilarity
+    - Leacock-Chodorow
+    - Lin
+  - for words, tokens, lemmas (both filtering and without filtering)
+    - jaccard 
+  - Alternatively look into Noun Phrases and all of this (but it will not be as useful I think)
+  - N-gramms
+  
+  - Things I've seen perform well in SEM EVAL:
+    - Distributional thesaurus (I think it is basically synsets)
+    - Monolingual Corpora (maybe use this two with Lin Similarity jsut as we did with the Brown Corpus) (We should use Coruña Corpus because I'm from A Coruña) (see https://en.wikipedia.org/wiki/List_of_text_corpora)
+    - Multilingual Corpora
+    - Wikipedia (I think this is just another corpus)
+    - WordNet
+    - Distributional similarity
+    - KB Similarity
+    - POS tagger
+    - SMT (Statistical Machine Translation)
+    - String Similarity 
+      - We could use sequence matcher: gives a ratio of similarity between sentences, recognizes longest string in common ...
+    - Stop Words: whether we filter or not
