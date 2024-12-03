@@ -13,10 +13,10 @@
 * Authors suggested pearson correlation as an evaluation method
 * **We can use Spacy, but not the vectors** because it is an internal word embeding, those are forbidden
 * No pdf reporting just:
-  *  Jupyter notebook
-  *  Slides
+  * Jupyter notebook
+  * Slides
 * **Use linters**, some kind of formaters (Black Formaters could be enough the problem is it's automatic )
-  * PEP 8 
+  * PEP 8
   * MyPy or typing
   * Use .py files to learn and make it better
 * **Important:** Ask questions on other presentations
