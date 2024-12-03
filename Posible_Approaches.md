@@ -1,3 +1,16 @@
+# [Dani]:
+I think the pipeline should look like this: 
+- Preprocessing
+  - Tokenization, lemmatization
+  - Stopwords filtering?
+  - If they differ in very few characters in total, ignore everything and assign a max score. 
+- Feature generation
+  - Every feature should be in itself a similarity measure between the sentences
+  - A lot of features are already in this form, but we can use other information (for example length of sentences), which we should convert to a similarity measure on the same scale (maybe [0, 1]). 
+- XGBoost on the features to the similarity score
+  - Question: does this also select features? We could do something like a Lasso regression or PCA to use only the relevant features
+  - The loss function should be the pearson correlation
+
 # MAURO: Possible approach:
 Since I'm familiar with **XGBoost**, and I've found would results using it in the past, I would do 
 - Pick objective data from the sentences 
