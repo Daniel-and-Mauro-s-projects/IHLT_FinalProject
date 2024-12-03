@@ -27,6 +27,36 @@ sentences["1_lower"] = sentences[1].apply(lambda x: x.lower())
 sentences["0_nlp"] = sentences["0_lower"].apply(lambda x: nlp(x))
 sentences["1_nlp"] = sentences["1_lower"].apply(lambda x: nlp(x))
 
+# Features
+
+# Convert POS tags into another system
+def get_wordnet_pos(category):
+  if category.startswith('J'):
+    return 'a'  # Adjective
+  elif category.startswith('V'):
+    return 'v'  # Verb
+  elif category.startswith('N'):
+    return 'n'  # Noun
+  elif category.startswith('R'):
+    return 'r'  # Adverb
+  else:
+    return None  # WordNet doesn't handle other POS tags
+
+word_tag_pairs = [
+('the', 'DT'), ('man', 'NN'), ('swim', 'VB'), ('with', 'PR'), ('a', 'DT'),
+('girl', 'NN'), ('and', 'CC'), ('a', 'DT'), ('boy', 'NN'), ('whilst', 'PR'),
+('the', 'DT'), ('woman', 'NN'), ('walk', 'VB')
+]
+
+## Synset Similarities:
+
+#### 1. Wu-Palmer
+
+#### 2. Path
+#### 3. Leacock
+#### 4. Lin
+
+
 # Display the DataFrame
 print(sentences["0_nlp"])
 
