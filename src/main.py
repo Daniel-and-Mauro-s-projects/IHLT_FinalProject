@@ -9,6 +9,7 @@
 #     print(f"Extracted all files to '{extraction_path}'")
 
 import pandas as pd
+import typing
 
 # Path to the text file
 file_path = "../Data/Train/train/STS.input.SMTeuroparl.txt"
@@ -18,6 +19,8 @@ gold_standard_file_path = "../Data/Train/train/STS.gs.SMTeuroparl.txt"
 df = pd.read_csv(file_path ,sep='\t',header=None)
 
 df['gs'] = pd.read_csv(gold_standard_file_path, header=None)
+
+features = pd.DataFrame()
 
 # Display the DataFrame
 print(df.head)

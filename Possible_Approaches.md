@@ -11,6 +11,20 @@ I think the pipeline should look like this:
   - Question: does this also select features? We could do something like a Lasso regression or PCA to use only the relevant features
   - The loss function should be the pearson correlation
 
+## Features: 
+1. Length (of course in [0, 1]) (characters or tokens? both maybe) - Dani
+   1. Characters 
+   2. Tokens
+2. Set of tokens - Dani
+   1. Different kind of set similarities here too
+3. Set of synsets - Mauro
+   1. Wu-Palmer
+   2. Path
+   3. Leacock
+   4. Lin
+4. Multiset of POS tags - Dani
+5. N-grams - Mauro
+
 # MAURO: Possible approach:
 Since I'm familiar with **XGBoost**, and I've found would results using it in the past, I would do 
 - Pick objective data from the sentences 
