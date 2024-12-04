@@ -12,6 +12,7 @@
 
 import pandas as pd
 import spacy
+import sys
 nlp = spacy.load("en_core_web_sm")
 
 import nltk
@@ -20,6 +21,7 @@ from nltk.corpus import wordnet_ic
 nltk.download('wordnet')
 nltk.download('wordnet_ic')
 ic_brown = wordnet_ic.ic('ic-brown.dat')
+ic_semcor = wordnet_ic.ic('ic-semcor.dat')
 
 import numpy as np
 from joblib import Parallel, delayed
@@ -80,10 +82,14 @@ def get_best_synset_pair(word1, word2, pos, similarity, similarity_type):
 
     synsets_word1 = wordnet.synsets(word1.text, pos=pos)
     synsets_word2 = wordnet.synsets(word2.text, pos=pos)
+    print('pos:', pos)
     max_sim = 0
 
     for synset1 in synsets_word1:
         for synset2 in synsets_word2:
+            if synset1.pos() == 's' or synset2.pos() == 's':
+                print('synset1:', synset1)
+                print('synset2:', synset2)
             sim = similarity(synset1, synset2)
             if sim and sim > max_sim:
                 max_sim = sim
@@ -112,7 +118,7 @@ def get_sentence_similarities(sentence1, sentence2, similarity_type):
         "wu-palmer": lambda s1, s2: s1.wup_similarity(s2),
         "path": lambda s1, s2: s1.path_similarity(s2),
         "leacock": lambda s1, s2: s1.lch_similarity(s2),
-        "lin": lambda s1, s2: s1.lin_similarity(s2, ic_brown)
+        "lin": lambda s1, s2: s1.lin_similarity(s2, ic_semcor)
     }
     similarity1 = 0
     den = 0 # We will normalize by the number of words that have a valid POS for WordNet
@@ -156,9 +162,8 @@ def get_sentence_similarities(sentence1, sentence2, similarity_type):
 # def compute_wu_palmer(row):
 #     return get_sentence_similarities(row["0_nlp"], row["1_nlp"], "wu-palmer")
 
-# features["wu-palmer"] = Parallel(n_jobs=-1)(delayed(compute_wu_palmer)(row) for _, row in sentences.iterrows())
-features["wu-palmer"] = sentences.apply(lambda row: get_sentence_similarities(row["0_nlp"], row["1_nlp"], "wu-palmer"), axis=1)
-
+features["lin"] = sentences.apply(lambda row: get_sentence_similarities(row["0_nlp"], row["1_nlp"], "lin"), axis=1)
+#features["wu-palmer"] = sentences.apply(lambda row: get_sentence_similarities(row["0_nlp"], row["1_nlp"], "wu-palmer"), axis=1)
 
 
 
