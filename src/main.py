@@ -18,6 +18,7 @@ nlp = spacy.load("en_core_web_sm")
 import nltk
 from nltk.corpus import wordnet
 from nltk.corpus import wordnet_ic
+from nltk.corpus.reader.wordnet import WordNetError
 nltk.download('wordnet')
 nltk.download('wordnet_ic')
 ic_brown = wordnet_ic.ic('ic-brown.dat')
@@ -47,19 +48,29 @@ def get_wordnet_pos(category):
     Convert a POS tag from the Spacy tagset to the WordNet tagset.
     """
     if category.startswith('J'):
-        return 'a'  # Adjective
+        return wordnet.ADJ  # Adjective
     elif category.startswith('V'):
-        return 'v'  # Verb
+        return wordnet.VERB  # Verb
     elif category.startswith('N'):
-        return 'n'  # Noun
+        return wordnet.NOUN  # Noun
     elif (category.startswith('R')) and (category != 'RP'):
         # I looked into the RP tag is for particles
-        return 'r'  # Adverb
+        return wordnet.ADV  # Adverb
     else:
         return None  # WordNet doesn't handle other POS tags
 
 cache = {}
-def get_best_synset_pair(word1, word2, pos, similarity, similarity_type):
+
+similarity_methods = {
+    "wu-palmer": lambda s1, s2: s1.wup_similarity(s2),
+    "path": lambda s1, s2: s1.path_similarity(s2),
+    "leacock": lambda s1, s2: s1.lch_similarity(s2),
+    "lin": lambda s1, s2: s1.lin_similarity(s2, ic_semcor),
+    "jiang": lambda s1, s2: s1.jcn_similarity(s2, ic_brown), 
+    "resnik": lambda s1, s2: s1.res_similarity(s2, ic_brown)
+}
+
+def get_best_synset_pair(word1, word2, pos, similarity_type):
     """
     Get the best synset pair for two words.
 
@@ -82,17 +93,20 @@ def get_best_synset_pair(word1, word2, pos, similarity, similarity_type):
 
     synsets_word1 = wordnet.synsets(word1.text, pos=pos)
     synsets_word2 = wordnet.synsets(word2.text, pos=pos)
-    print('pos:', pos)
     max_sim = 0
 
     for synset1 in synsets_word1:
         for synset2 in synsets_word2:
+            # We skip the satellite adjectives (gives problems for Lin and Leacock)
             if synset1.pos() == 's' or synset2.pos() == 's':
-                print('synset1:', synset1)
-                print('synset2:', synset2)
-            sim = similarity(synset1, synset2)
-            if sim and sim > max_sim:
-                max_sim = sim
+                continue
+            try:
+                sim = similarity_methods[similarity_type](synset1, synset2)
+                if sim and sim > max_sim:
+                    max_sim = sim
+            except WordNetError as e:
+                print(f"Skipping comparison due to error: {e}")
+                continue
     
     cache[cache_key] = max_sim
     # If there is no similarity, we return 0
@@ -114,12 +128,6 @@ def get_sentence_similarities(sentence1, sentence2, similarity_type):
     - A float representing the average similarity score between the two sentences.
     """
     # TODO: Judge if we want to normalize by the number of words that have a valid POS for WordNet
-    similarity_methods = {
-        "wu-palmer": lambda s1, s2: s1.wup_similarity(s2),
-        "path": lambda s1, s2: s1.path_similarity(s2),
-        "leacock": lambda s1, s2: s1.lch_similarity(s2),
-        "lin": lambda s1, s2: s1.lin_similarity(s2, ic_semcor)
-    }
     similarity1 = 0
     den = 0 # We will normalize by the number of words that have a valid POS for WordNet
     for token1 in sentence1:
@@ -132,7 +140,7 @@ def get_sentence_similarities(sentence1, sentence2, similarity_type):
             pos2 = get_wordnet_pos(token2.tag_)
             if (not pos2) or (pos1 != pos2):
                 continue
-            similarities = np.append(similarities,get_best_synset_pair(token1, token2, pos1, similarity_methods[similarity_type], similarity_type))
+            similarities = np.append(similarities,get_best_synset_pair(token1, token2, pos1, similarity_type))
         if similarities.size > 0:
             similarity1 += np.max(similarities)
     # We average the similarity (even if they don't get a similarity)
@@ -150,7 +158,7 @@ def get_sentence_similarities(sentence1, sentence2, similarity_type):
             pos1 = get_wordnet_pos(token1.tag_)
             if (not pos1) or (pos1 != pos2):
                 continue
-            similarities = np.append(similarities, get_best_synset_pair(token1, token2, pos2, similarity_methods[similarity_type], similarity_type))
+            similarities = np.append(similarities, get_best_synset_pair(token1, token2, pos2, similarity_type))
         if similarities.size > 0:
             similarity2 += np.max(similarities)
     # We average the similarity (even if they don't get a similarity)
@@ -162,6 +170,7 @@ def get_sentence_similarities(sentence1, sentence2, similarity_type):
 # def compute_wu_palmer(row):
 #     return get_sentence_similarities(row["0_nlp"], row["1_nlp"], "wu-palmer")
 
+#features["resnik"] = sentences.apply(lambda row: get_sentence_similarities(row["0_nlp"], row["1_nlp"], "resnik"), axis=1)
 features["lin"] = sentences.apply(lambda row: get_sentence_similarities(row["0_nlp"], row["1_nlp"], "lin"), axis=1)
 #features["wu-palmer"] = sentences.apply(lambda row: get_sentence_similarities(row["0_nlp"], row["1_nlp"], "wu-palmer"), axis=1)
 
