@@ -1,110 +1,113 @@
 \documentclass{beamer}
 
-% Theme
-\usetheme{Madrid} % Choose your favorite theme
-\usecolortheme{seahorse} % Optional: customize colors
+\usetheme{Madrid} 
+\usecolortheme{seahorse} 
 
-% Title Page
-\title[Semantic Textual Similarity]{Semantic Textual Similarity}}
+\title[Semantic Textual Similarity]{Semantic Textual Similarity}
 \author{Mauro Vázquez Chas, Dániel Mácsai}
 \date{December 12, 2024}
 
 \begin{document}
 
-% Title Slide
 \begin{frame}
     \titlepage
 \end{frame}
 
-% Table of Contents
 \begin{frame}{Outline}
     \tableofcontents
 \end{frame}
 
-% Section 1: Introduction
-\section{Introduction}
-
-\begin{frame}{Background}
-    \begin{itemize}
-        \item Brief overview of the project topic
-        \item Importance of the problem
-        \item Objectives of the presentation
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Problem Statement}
-    \begin{block}{Problem}
-        Clearly define the problem your project addresses.
-    \end{block}
-    \begin{block}{Goal}
-        Explain the specific goals of your project.
-    \end{block}
-\end{frame}
-
-% Section 2: Methods
-\section{Methods}
-
+\section{Preprocessing}
 \begin{frame}{Preprocessing}
-    \begin{itemize}
-        \item Tokenization
-        \item Lowercasing
-        \item Removing stopwords and punctuation
-        \item Lemmatization
-    \end{itemize}
-
-    \begin{itemize}
-        \item Cleaning bad lines where there are not two fields
-    \end{itemize}
+    \begin{block}{Precomputation}
+        \begin{itemize}
+            \item Lowercasing and removing punctuation
+            \item Tokenization with and without stopwords
+            \item Lemmatization with and without stopwords
+            \item Synsets computed by Lesk's algorithm
+        \end{itemize}
+    \end{block}
 \end{frame}
 
-\begin{frame}{Features}
+\section{Features computed}
+
+\begin{frame}{Basic features}
     \begin{block}{Basic features}
         \begin{itemize}
             \item Character ratio, token ratio
-            \item Levenshtein ratio
+            \item Levenshtein ratio (edit distance)
             \item Jaccard similarity
+                \begin{itemize}
+                    \item on tokens with and without stopwords 
+                    \item on lemmas with and without stopwords
+                    \item on synsets from Lesk's algorithm
+                \end{itemize}   
         \end{itemize}
     \end{block}
+\end{frame}
+
+\begin{frame}{Utilizing synset similarity}
+    \begin{block}{Best possible pair}
+        For each word in each sentence, we get the best similarity value considering all of its possible synsets and all of the synsets from the words in the other sentence, all of this without modifying its post tags. After this, take the average, considering only the tokens with a valid wordnet pos tag.
+        Methods we used for the synset similarities: 
+        \begin{itemize}
+            \item Path similarity
+            \item Wu-Palmer similarity
+            \item Leacock-Chodorow similarity
+        \end{itemize}
+    \end{block}
+     
+\end{frame}
+\begin{frame}{Utilizing synset similarity}
+    \begin{block}{Using Lesk's algorithm}
+        We use Lesk's algorithm to match synsets to tokens in the two sentences.
+        After, for each synset in a sentence, we compute the highest similarity value using the synsets from the other sentence, and we take the average of these similarities.
+        Methods we used for the synset similarities: 
+        \begin{itemize}
+            \item Path similarity
+            \item Wu-Palmer similarity
+            \item Leacock-Chodorow similarity
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Other features}
     \begin{block}{N-grams}
         \begin{itemize}
-            \item On tokens and characters
-            \item Using sets and vectors
+            \item On tokens, lemmas and characters
+            \item Using Jaccard similarity for sets and cosine similarities on histograms
         \end{itemize}
     \end{block}
     \begin{block}{SentiWordNet}
-        \begin{itemize}
-            \item Averaging the positive and negative scores
-        \end{itemize}
+        For both the positive and the negative scores we compute the following getting two features in total:
+        For each sentence, we sum the scores of each Lesk synset. Afterwards, we substract the values of the sentences and normalize by the maximum number of synsets between the two sentences.
     \end{block}
-    Lesk similarity
 \end{frame}
 
-\begin{frame}{Approaches}
-    \begin{block}{What worked}
+\section{Models and additional ideas}
+\begin{frame}{Models and additional ideas}
+    \begin{block}{Models}
         \begin{itemize}
-            \item Using Random forest
-            \item Using PCA
+            \item SVM
+            \item XGBoost
+            \item Random Forest
         \end{itemize}
     \end{block}
-    \begin{block}{What didn't work}
+
+    \begin{block}{Additional ideas}
         \begin{itemize}
             \item Oversampling SMTeuroparl and MSRpar
-            \item SVM and XGBoost
-            \item Feature selection with Random Forest
+            \item Feature selection with Random Forest based on importance
+            \item Normalizing the features
+            \item PCA on the features
         \end{itemize}
     \end{block}
 \end{frame}
 
-
-
-% Section 3: Results
 \section{Results}
 
-\begin{frame}{Key Findings}
-    \begin{itemize}
-        \item Highlight main results
-        \item Use figures, charts, or tables (if available)
-    \end{itemize}
+\begin{frame}{Results}
+    
 \end{frame}
 
 % Section 4: Discussion and Conclusion
@@ -112,8 +115,6 @@
 
 \begin{frame}{Conclusion}
     \begin{itemize}
-        \item Summarize key takeaways
-        \item Future work or implications
     \end{itemize}
 \end{frame}
 
