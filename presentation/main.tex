@@ -1,0 +1,126 @@
+\documentclass{beamer}
+
+% Theme
+\usetheme{Madrid} % Choose your favorite theme
+\usecolortheme{seahorse} % Optional: customize colors
+
+% Title Page
+\title[Semantic Textual Similarity]{Semantic Textual Similarity}}
+\author{Mauro Vázquez Chas, Dániel Mácsai}
+\date{December 12, 2024}
+
+\begin{document}
+
+% Title Slide
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Table of Contents
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+% Section 1: Introduction
+\section{Introduction}
+
+\begin{frame}{Background}
+    \begin{itemize}
+        \item Brief overview of the project topic
+        \item Importance of the problem
+        \item Objectives of the presentation
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Problem Statement}
+    \begin{block}{Problem}
+        Clearly define the problem your project addresses.
+    \end{block}
+    \begin{block}{Goal}
+        Explain the specific goals of your project.
+    \end{block}
+\end{frame}
+
+% Section 2: Methods
+\section{Methods}
+
+\begin{frame}{Preprocessing}
+    \begin{itemize}
+        \item Tokenization
+        \item Lowercasing
+        \item Removing stopwords and punctuation
+        \item Lemmatization
+    \end{itemize}
+
+    \begin{itemize}
+        \item Cleaning bad lines where there are not two fields
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Features}
+    \begin{block}{Basic features}
+        \begin{itemize}
+            \item Character ratio, token ratio
+            \item Levenshtein ratio
+            \item Jaccard similarity
+        \end{itemize}
+    \end{block}
+    \begin{block}{N-grams}
+        \begin{itemize}
+            \item On tokens and characters
+            \item Using sets and vectors
+        \end{itemize}
+    \end{block}
+    \begin{block}{SentiWordNet}
+        \begin{itemize}
+            \item Averaging the positive and negative scores
+        \end{itemize}
+    \end{block}
+    Lesk similarity
+\end{frame}
+
+\begin{frame}{Approaches}
+    \begin{block}{What worked}
+        \begin{itemize}
+            \item Using Random forest
+            \item Using PCA
+        \end{itemize}
+    \end{block}
+    \begin{block}{What didn't work}
+        \begin{itemize}
+            \item Oversampling SMTeuroparl and MSRpar
+            \item SVM and XGBoost
+            \item Feature selection with Random Forest
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+
+% Section 3: Results
+\section{Results}
+
+\begin{frame}{Key Findings}
+    \begin{itemize}
+        \item Highlight main results
+        \item Use figures, charts, or tables (if available)
+    \end{itemize}
+\end{frame}
+
+% Section 4: Discussion and Conclusion
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item Summarize key takeaways
+        \item Future work or implications
+    \end{itemize}
+\end{frame}
+
+% Section 5: Questions
+\begin{frame}{Questions}
+    \centering
+    {\Huge \textbf{Questions?}}
+\end{frame}
+
+\end{document}
