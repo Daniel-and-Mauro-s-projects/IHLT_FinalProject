@@ -1,4 +1,6 @@
-\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
-\beamer@sectionintoc {2}{Methods}{5}{0}{2}
-\beamer@sectionintoc {3}{Results}{6}{0}{3}
-\beamer@sectionintoc {4}{Conclusion}{7}{0}{4}
+\beamer@sectionintoc {1}{Preprocessing}{3}{0}{1}
+\beamer@sectionintoc {2}{Features computed}{4}{0}{2}
+\beamer@sectionintoc {3}{Models and additional ideas}{8}{0}{3}
+\beamer@sectionintoc {4}{Course of Actions}{9}{0}{4}
+\beamer@sectionintoc {5}{Results}{25}{0}{5}
+\beamer@sectionintoc {6}{Takeaways}{26}{0}{6}

@@ -1,7 +1,23 @@
-\documentclass{beamer}
+\documentclass[usenames,dvipsnames]{beamer}
+
+\usepackage{tikz}
+\usepackage{latexsym,pdfsync,xcolor,graphicx}
+\usepackage{ragged2e}
 
 \usetheme{Madrid} 
 \usecolortheme{seahorse} 
+
+
+%código para la línea temporal
+\setbeamercovered{invisible}
+\usetikzlibrary{overlay-beamer-styles}
+\tikzset{
+    highlight on/.style={alt={#1{fill=red!80!black,color=red!80!black}{fill=gray!30!white,color=gray!30!white}}},
+}
+
+%--------------------------------------------------------
+
+
 
 \title[Semantic Textual Similarity]{Semantic Textual Similarity}
 \author{Mauro Vázquez Chas, Dániel Mácsai}
@@ -19,7 +35,7 @@
 
 \section{Preprocessing}
 \begin{frame}{Preprocessing}
-    \begin{block}{Precomputation}
+    \begin{block}{Preprocessing}
         \begin{itemize}
             \item Lowercasing and removing punctuation
             \item Tokenization with and without stopwords
@@ -48,7 +64,7 @@
 
 \begin{frame}{Utilizing synset similarity}
     \begin{block}{Best possible pair}
-        For each word in each sentence, we get the best similarity value considering all of its possible synsets and all of the synsets from the words in the other sentence, all of this without modifying its post tags. After this, take the average, considering only the tokens with a valid wordnet pos tag.
+        For each word in each sentence, we get the best similarity value considering all of its possible synsets and all the synsets from the words in the other sentence, all of this without modifying its post tags. After this, take the average, considering only the tokens with a valid wordnet pos tag.
         Methods we used for the synset similarities: 
         \begin{itemize}
             \item Path similarity
@@ -104,6 +120,65 @@
     \end{block}
 \end{frame}
 
+\section{Course of Actions}
+
+\begin{frame}{Course of Actions}
+    \begin{block}{Initial approach}
+        \begin{itemize}
+            \item Features
+                \begin{itemize}
+                    \item Basic features (without Levenshtein)
+                    \item Synset best possible pair similarity (Path and Wu-Palmer)
+                    \item Jaccard similarities for tokens and lemmas
+                    \item N-grams jaccard similarities
+                \end{itemize}
+            \item Using XGBoost (with a grid search for hyperparameters)
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Course of Actions}
+    \frametitle{Course of Actions}
+    \begin{columns}
+    \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textcolor{ForestGreen}{Switched to Random Forest (with a grid search for hyperparameters)}
+            \pause
+            \item \textcolor{red}{Manual feature selection}
+            \pause
+            \item \textcolor{ForestGreen}{Added Leackock-Chodorow similarity}
+            \pause
+            \item \textcolor{red}{Added Resnik and Jiang-Conrath similarities}
+            \pause
+            \item \textcolor{red}{Tried Support Vector Regression}
+            \pause
+            \item \textcolor{red}{Tried Oversampling}
+            \pause
+            \item \textcolor{ForestGreen}{Added PCA}
+            \item \textcolor{ForestGreen}{Lesk Jaccard similarities}
+            \pause
+        \end{itemize}   
+    \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textcolor{ForestGreen}{SentiWordNet}
+            \pause
+            \item \textcolor{ForestGreen}{Added N-Grams occurrence-based similarities}
+            \pause
+            \item \textcolor{ForestGreen}{Ignore stopwords in Jaccard similarities}
+            \pause
+            \item \textcolor{red}{Tried feature selection with Random Forest Importance}
+            \pause
+            \item \textcolor{ForestGreen}{Removed punctuation}
+            \pause
+            \item \textcolor{ForestGreen}{Added lesk synset pair similarities}
+            \pause
+            \item \textcolor{red}{Tried Scaling Variables}
+            \pause
+            \item \textcolor{ForestGreen}{Removed PCA}
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
 \section{Results}
 
 \begin{frame}{Results}
@@ -124,11 +199,17 @@
     \end{table}  
 \end{frame}
 
-% Section 4: Discussion and Conclusion
-\section{Conclusion}
 
-\begin{frame}{Conclusion}
+% Section 4: Discussion and Conclusion
+\section{Takeaways}
+
+\begin{frame}{Takeaways}
     \begin{itemize}
+        \item Impact of the different Features
+        \item Gap with modern techniques
+        \item Importance of cleaning and preprocessing
+        \item Importance of effective implementation
+        \item Importance of the choice of the model
     \end{itemize}
 \end{frame}
 
